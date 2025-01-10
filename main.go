@@ -2,8 +2,7 @@ package main
 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/core"
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
 )
 
 func main() {
@@ -16,11 +15,22 @@ func main() {
 	//	})
 	//})
 	//r.Run(":9090")
-	core.InitializeViper()
-	r := gin.Default()
-	r.GET("/hello", func(c *gin.Context) {
-		c.String(http.StatusOK, "hello world")
-	})
-	r.Run(":9090")
+	global.DEMO_VIPER = core.InitializeViper()
+	global.LOG = core.InitializeLog()
+	global.LOG.Info("log init success!")
+
+	global.DB = core.InitializeDB()
+	defer func() {
+		if global.DB != nil {
+			db, _ := global.DB.DB()
+			db.Close()
+		}
+	}()
+
+	core.InitializeValidator()
+
+	core.RunServer()
+	/*	fmt.Print(global.DEMO_CONFIG)
+		core.RunServer()*/
 
 }

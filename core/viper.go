@@ -22,14 +22,14 @@ func InitializeViper(path ...string) *viper.Viper {
 			if configEnv := os.Getenv(Internal.ConfigEnv); configEnv == "" {
 				switch gin.Mode() {
 				case gin.DebugMode:
-					config = Internal.ConfigDebugFile
+					config = Internal.ConfigDefaultFile
 
 				case gin.ReleaseMode:
 					config = Internal.ConfigReleaseFile
 				case gin.TestMode:
 					config = Internal.ConfigTestFile
 				}
-				fmt.Printf("您正在使用gin模式的%s环境名称,config的路径为%s\\n", gin.Mode(), Internal.ConfigDefaultFile)
+				fmt.Printf("您正在使用gin模式的%s环境名称,config的路径为%s\\n", gin.Mode(), config)
 			} else {
 				config = configEnv
 				fmt.Printf("您正在使用gin模式的%s环境名称,config的路径为%s\\n", gin.Mode(), configEnv)
@@ -57,6 +57,9 @@ func InitializeViper(path ...string) *viper.Viper {
 			fmt.Println("Unmarshal err:", err)
 		}
 	})
+	if err = vip.Unmarshal(&global.DEMO_CONFIG); err != nil {
+		panic(err)
+	}
 	fmt.Println("====1-viper====:viper init config success")
 	return vip
 }
