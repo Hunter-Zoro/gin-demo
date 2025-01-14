@@ -21,3 +21,12 @@ func Register(context *gin.Context) {
 		return
 	}
 }
+
+func UserInfo(context *gin.Context) {
+	err, user := service.UserService.Info(context.Keys["id"].(string))
+	if err != nil {
+		response.BusinessFail(context, err.Error())
+		return
+	}
+	response.Success(context, user)
+}

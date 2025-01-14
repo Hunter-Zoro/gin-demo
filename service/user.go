@@ -23,3 +23,19 @@ func (userService *userService) Register(params request.Register) (err error, us
 	err = global.DB.Create(&user).Error
 	return
 }
+
+func (userService *userService) Login(params request.Login) (err error, user models.User) {
+	err = global.DB.Where("mobile=?", params.Mobile).First(&user).Error
+	if err != nil || !utils.BcryptMakeCheck([]byte(params.Password), user.Password) {
+		err = errors.New("用户名不存在或密码错误！")
+	}
+	return
+}
+
+func (useService userService) Info(id string) (err error, user models.User) {
+	err = global.DB.Where("id=?", id).First(&user).Error
+	if err != nil {
+		err = errors.New("数据不存在")
+	}
+	return
+}
